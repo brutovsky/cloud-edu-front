@@ -17,6 +17,7 @@ import StudentList from "./components/StudentsList";
 import {SchoolContext, SchoolProvider} from "./context/SchoolContext";
 import Ingestion from "./components/ingestion/Ingestion";
 import Tasks from "./components/ingestion/Tasks";
+import RequestNewSchool from "./components/RequestNewSchool";
 
 initFontAwesome();
 
@@ -61,6 +62,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Layout/>}>
                             <Route index element={<Home/>}/>
+                            <Route path="/new-school" element={<RequestNewSchool/>}/>
                             <Route
                                 path="/school"
                                 element={

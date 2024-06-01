@@ -27,7 +27,6 @@ const StudentList = () => {
 
     useEffect(() => {
         fetchStudents(page, rowsPerPage);
-        console.log('i fire once');
     }, [page, rowsPerPage]);
 
     const fetchStudents = async (page, rowsPerPage) => {

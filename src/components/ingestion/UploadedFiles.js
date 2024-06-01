@@ -23,8 +23,10 @@ import SingleFileUploader from "./SingleFileUploader";
 import {useAuth0} from "@auth0/auth0-react";
 import LoadingSmall from "../LoadingSmall";
 import {SchoolContext} from "../../context/SchoolContext";
+import TaskFormDialog from "./TaskFormDialog";
 
 const FileGrid = () => {
+    const [showTaskForm, setShowTaskForm] = useState(false);
     const [files, setFiles] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [infoOpen, setInfoOpen] = useState(false);
@@ -32,26 +34,17 @@ const FileGrid = () => {
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [loading, setLoading] = useState(true);
-    const [newFileName, setNewFileName] = useState('');
-    const [newFileType, setNewFileType] = useState('csv');
     const [addFileOpen, setAddFileOpen] = useState(false);
     const filesPerPage = 10;
     const {getAccessTokenSilently} = useAuth0();
-    const {
-        selectedSchool,
-        setSelectedSchool,
-        isSchoolAssignedToUser,
-        availableSchools,
-        setAvailableSchools
-    } = useContext(SchoolContext);
+    const {selectedSchool} = useContext(SchoolContext);
     const {user, isAuthenticated, isLoading} = useAuth0();
 
     useEffect(() => {
-        fetchFiels(page, rowsPerPage);
-        console.log('i fire once');
+        fetchFields(page, rowsPerPage);
     }, [page, rowsPerPage, selectedSchool, user]);
 
-    const fetchFiels = async (page, rowsPerPage) => {
+    const fetchFields = async (page, rowsPerPage) => {
         setLoading(true);
         try {
             const token = await getAccessTokenSilently();
@@ -72,6 +65,45 @@ const FileGrid = () => {
         }
     };
 
+    const deleteFile = async (file) => {
+        try {
+            const token = await getAccessTokenSilently();
+            let queryParams = `schoolId=${user.app_metadata.school}`
+            const response = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/files/${file.filename}?${queryParams}`, {
+                method: "delete",
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            const result = await response.ok;
+            if (result) {
+                setFiles(files.filter(f => f.id !== file.id));
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const createTask = async (file) => {
+        try {
+            const token = await getAccessTokenSilently();
+            let queryParams = `schoolId=${user.app_metadata.school}`
+            const response = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/files/${file.filename}?${queryParams}`, {
+                method: "delete",
+                headers: {Authorization: `Bearer ${token}`}
+            });
+            const result = await response.ok;
+            if (result) {
+                setFiles(files.filter(f => f.id !== file.id));
+            }
+        } catch (error) {
+            console.error('Error deleting file:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const handleInfoClick = (file) => {
         setCurrentFile(file);
         setInfoOpen(true);
@@ -81,19 +113,27 @@ const FileGrid = () => {
         setInfoOpen(false);
     };
 
-    const handleDelete = (file) => {
-        setFiles(files.filter(f => f.id !== file.id));
-    };
-
-    const handleBatchDelete = () => {
-        setFiles(files.filter(file => !selectedFiles.includes(file.id)));
+    const handleTaskFormClose = () => {
+        setShowTaskForm(false);
         setSelectedFiles([]);
     };
 
-    const handleSelect = (fileId) => {
-        setSelectedFiles(selectedFiles.includes(fileId)
-            ? selectedFiles.filter(id => id !== fileId)
-            : [...selectedFiles, fileId]);
+    const handleDelete = async (file) => {
+        await deleteFile(file);
+    };
+
+    const handleTaskCreate = async () => {
+        // await createTask(selectedFiles[0]);
+        setShowTaskForm(true);
+    }
+
+    const handleBatchDelete = async () => {
+        await deleteFile(selectedFiles[0]);
+        setSelectedFiles([]);
+    };
+
+    const handleSelect = (file) => {
+        setSelectedFiles(selectedFiles.includes(file) ? [] : [file]);
     };
 
     const handlePageChange = (event, value) => {
@@ -183,10 +223,10 @@ const FileGrid = () => {
                                     }}
                                 >
                                     <Checkbox
-                                        checked={selectedFiles.includes(file.id)}
+                                        checked={selectedFiles.includes(file)}
                                         onChange={(e) => {
                                             e.stopPropagation();
-                                            handleSelect(file.id);
+                                            handleSelect(file);
                                         }}
                                         style={{position: 'absolute', top: '8px', left: '8px'}}
                                     />
@@ -198,9 +238,9 @@ const FileGrid = () => {
                                     <Typography variant="body1" style={{color: '#202124'}}>{file.filename}</Typography>
                                     <IconButton
                                         color="secondary"
-                                        onClick={(e) => {
+                                        onClick={async (e) => {
                                             e.stopPropagation();
-                                            handleDelete(file);
+                                            await handleDelete(file);
                                         }}
                                         style={{position: 'absolute', bottom: '8px', right: '8px'}}
                                     >
@@ -233,8 +273,21 @@ const FileGrid = () => {
                     <Pagination count={Math.ceil(files.length / filesPerPage)} page={page} onChange={handlePageChange}
                                 style={{marginTop: '16px'}}/>
                     <Button
-                        onClick={handleBatchDelete}
-                        disabled={selectedFiles.length === 0}
+                        onClick={handleTaskCreate}
+                        disabled={selectedFiles.length !== 1}
+                        style={{
+                            marginTop: '16px',
+                            marginRight: '8px',
+                            color: selectedFiles.length > 0 ? '#1a73e8' : '#a0a0a0'
+                        }}
+                    >
+                        Create a New Task From File
+                    </Button>
+                    <Button
+                        onClick={async () => {
+                            await handleBatchDelete();
+                        }}
+                        disabled={selectedFiles.length !== 1}
                         style={{
                             marginTop: '16px',
                             marginRight: '8px',
@@ -254,10 +307,10 @@ const FileGrid = () => {
                     </Button>
                     {currentFile && (
                         <Dialog open={infoOpen} onClose={handleInfoClose}>
-                            <DialogTitle>{currentFile.name}</DialogTitle>
+                            <DialogTitle>{currentFile.filename}</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
-                                    Description for {currentFile.name}
+                                    Description for {currentFile.filename}
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
@@ -266,6 +319,15 @@ const FileGrid = () => {
                                 </Button>
                             </DialogActions>
                         </Dialog>
+                    )}
+                    {showTaskForm && (
+                        <TaskFormDialog
+                            showTaskForm={showTaskForm}
+                            handleTaskFormClose={handleTaskFormClose}
+                            selectedFile={selectedFiles[0]}
+                            selectedSchool={selectedSchool}
+                            getAccessTokenSilently={getAccessTokenSilently}
+                        />
                     )}
                     <Dialog open={addFileOpen} onClose={handleAddFileClose}>
                         <DialogTitle>Add New File</DialogTitle>

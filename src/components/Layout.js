@@ -12,16 +12,16 @@ import {SchoolContext} from "../context/SchoolContext";
 import Footer from "./Footer";
 
 const tabsConfig = [
-    {label: "Home", path: "/", roles: [], index: 0},
-    {label: "Profile", path: "/profile", roles: [Role.Admin, Role.Student], index: 1},
-    {label: "School", path: "/school", roles: [Role.Admin, Role.Student], index: 2},
-    {label: "Lessons", path: "/lessons", roles: [Role.Student], index: 3},
-    {label: "Students", path: "/students", roles: [Role.Admin], index: 4},
-    {label: "Personnel", path: "/personnel", roles: [Role.Admin], index: 5},
-    {label: "Classes", path: "/classes", roles: [Role.Admin], index: 6},
-    {label: "Reports", path: "/reports", roles: [Role.Admin], index: 7},
-    {label: "Analytics", path: "/analytics", roles: [Role.Admin], index: 8},
-    {label: "Data Ingestion", path: "/ingestion", roles: [Role.Admin], index: 9},
+    {label: "Home", path: "", roles: [], index: 0},
+    {label: "Profile", path: "profile", roles: [Role.Admin, Role.Student], index: 1},
+    {label: "School", path: "school", roles: [Role.Admin, Role.Student], index: 2},
+    {label: "Lessons", path: "lessons", roles: [Role.Student], index: 3},
+    {label: "Students", path: "students", roles: [Role.Admin], index: 4},
+    {label: "Personnel", path: "personnel", roles: [Role.Admin], index: 5},
+    {label: "Classes", path: "classes", roles: [Role.Admin], index: 6},
+    {label: "Reports", path: "reports", roles: [Role.Admin], index: 7},
+    {label: "Analytics", path: "analytics", roles: [Role.Admin], index: 8},
+    {label: "Data Ingestion", path: "ingestion", roles: [Role.Admin], index: 9},
 ];
 
 const schoolTabs = [
@@ -84,8 +84,8 @@ function Layout() {
                             </Link>
                         </IconButton>
                     </Box>
-                    <TabContext value={pathname}>
-                        <TabList variant="scrollable" value={pathname}
+                    <TabContext value={pathname.split('/')[1]}>
+                        <TabList variant="scrollable" value={pathname.split('/')[1]}
                                  aria-label="teacher dashboard tabs" sx={{marginLeft: 'auto'}}>
                             {filteredTabs.map((tab, index) => (
                                 <Tab key={index} value={tab.path} label={tab.label} component={Link}

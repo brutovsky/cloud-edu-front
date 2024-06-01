@@ -7,7 +7,7 @@ import {useNavigate} from 'react-router-dom';
 
 const Home = () => {
     const staticContentBucket = process.env.REACT_APP_STATIC_CONTENT_BUCKET
-    const {user, isAuthenticated, isLoading} = useAuth0();
+    const {user, isAuthenticated} = useAuth0();
     const {selectedSchool, isSchoolAssignedToUser} = useContext(SchoolContext);
     const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const Home = () => {
                     />
                     <Box></Box>
                     <Button variant="contained" color="primary" onClick={handleRequestClick} sx={{mt: 2}}>
-                        Want to join? Make a join request!
+                        Want to join?
                     </Button>
                 </Fragment>
             )}

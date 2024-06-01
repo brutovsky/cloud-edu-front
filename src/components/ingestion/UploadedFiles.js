@@ -271,7 +271,7 @@ const FileGrid = () => {
                         ))}
                     </Grid>
                     <Pagination count={Math.ceil(files.length / filesPerPage)} page={page} onChange={handlePageChange}
-                                style={{marginTop: '16px'}}/>
+                                style={{marginTop: '16px'}} color="primary"/>
                     <Button
                         onClick={handleTaskCreate}
                         disabled={selectedFiles.length !== 1}

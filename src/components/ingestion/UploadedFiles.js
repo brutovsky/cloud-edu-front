@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
     Button,
     Checkbox,
@@ -38,7 +38,7 @@ const FileGrid = () => {
     const filesPerPage = 10;
     const {getAccessTokenSilently} = useAuth0();
     const {selectedSchool} = useContext(SchoolContext);
-    const {user, isAuthenticated, isLoading} = useAuth0();
+    const {user} = useAuth0();
 
     useEffect(() => {
         fetchFields(page, rowsPerPage);
@@ -54,7 +54,6 @@ const FileGrid = () => {
                 headers: {Authorization: `Bearer ${token}`}
             });
             const data = await response.json();
-            console.log(data)
             if (data && data.entity) {
                 setFiles(data.entity);
             }
@@ -84,26 +83,6 @@ const FileGrid = () => {
         }
     };
 
-    const createTask = async (file) => {
-        try {
-            const token = await getAccessTokenSilently();
-            let queryParams = `schoolId=${user.app_metadata.school}`
-            const response = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/api/v1/files/${file.filename}?${queryParams}`, {
-                method: "delete",
-                headers: {Authorization: `Bearer ${token}`}
-            });
-            const result = await response.ok;
-            if (result) {
-                setFiles(files.filter(f => f.id !== file.id));
-            }
-        } catch (error) {
-            console.error('Error deleting file:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-
     const handleInfoClick = (file) => {
         setCurrentFile(file);
         setInfoOpen(true);
@@ -123,7 +102,6 @@ const FileGrid = () => {
     };
 
     const handleTaskCreate = async () => {
-        // await createTask(selectedFiles[0]);
         setShowTaskForm(true);
     }
 
@@ -148,8 +126,6 @@ const FileGrid = () => {
         setAddFileOpen(false);
     };
 
-    const iframeRef = useRef(null);
-
     const handleFileDownload = (url) => {
         // Create a temporary iframe and set its source to the signed URL
         const iframe = document.createElement('iframe');
@@ -171,7 +147,6 @@ const FileGrid = () => {
                     headers: {Authorization: `Bearer ${token}`}
                 });
                 const data = await response.json();
-                console.log(data)
                 if (data && data.entity) {
                     handleFileDownload(data.entity)
                 }

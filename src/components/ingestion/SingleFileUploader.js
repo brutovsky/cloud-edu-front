@@ -31,9 +31,8 @@ const SingleFileUploader = ({onFileUpload}) => {
 
                 const data = await result.json();
 
-                console.log(data);
                 setStatus("success");
-                onFileUpload(file); // Call the parent callback with the uploaded file
+                onFileUpload(file);
             } catch (error) {
                 console.error(error);
                 setStatus("fail");

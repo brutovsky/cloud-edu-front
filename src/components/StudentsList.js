@@ -74,16 +74,6 @@ const StudentList = () => {
         setPrevPage(0);
     };
 
-    const handleDeleteSelected = async () => {
-        // try {
-        //     await Promise.all(selected.map(id => axios.delete(`/api/v1/schools/default-school/students/${id}`)));
-        //     fetchStudents(page, rowsPerPage); // Refresh the list after deletion
-        //     setSelected([]);
-        // } catch (error) {
-        //     console.error('Error deleting students:', error);
-        // }
-    };
-
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
             const newSelected = students.result.map((n) => n.id);

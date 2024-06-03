@@ -51,18 +51,10 @@ function Layout() {
     };
 
     useEffect(() => {
-        if (isAuthenticated) {
-            showToken();
-        }
         if (error) {
             console.log(`Oops... ${error.message}`);
         }
     }, [isAuthenticated, user, error, getAccessTokenSilently, isSchoolAssignedToUser]);
-
-    const showToken = async () => {
-        const token = await getAccessTokenSilently();
-        console.log(token);
-    };
 
     const hasRole = (role) => userHasRole(user, role);
 

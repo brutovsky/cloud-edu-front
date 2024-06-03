@@ -58,7 +58,6 @@ const Tasks = () => {
                 headers: {Authorization: `Bearer ${token}`}
             });
             const data = await response.json();
-            console.log(data);
             if (data && data.entity) {
                 setTasks(data.entity);
             }
@@ -78,7 +77,6 @@ const Tasks = () => {
                 headers: {Authorization: `Bearer ${token}`}
             });
             const data = await response.json();
-            console.log(data);
             return data.entity;
         } catch (error) {
             console.error('Error fetching task info:', error);

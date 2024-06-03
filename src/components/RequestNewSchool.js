@@ -60,7 +60,6 @@ const RequestNewSchool = () => {
                 throw new Error('Network response was not ok');
             }
             const result = await response.json();
-            console.log(result)
             toast.success(`Request successful: ${JSON.stringify(result.message)}`);
             // navigate('/');
         } catch (error) {

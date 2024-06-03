@@ -64,9 +64,8 @@ const TaskFormDialog = ({showTaskForm, handleTaskFormClose, selectedFile, select
                 }
             });
             const result = await response.data;
-            console.log(result);
             if (result) {
-
+                handleTaskFormClose();
             }
         } catch (error) {
             console.error('Error creating a task:', error);
@@ -124,7 +123,6 @@ const TaskFormDialog = ({showTaskForm, handleTaskFormClose, selectedFile, select
                 </Button>
                 <Button disabled={!isValidType} onClick={async () => {
                     await createTask()
-                    console.log(selectedFile)
                 }} color="primary">
                     Create Task
                 </Button>
